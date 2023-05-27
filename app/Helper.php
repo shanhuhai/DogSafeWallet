@@ -1,7 +1,9 @@
 <?php
 namespace App;
 
-class Util {
+use Web3p\EthereumUtil\Util;
+
+class Helper {
 
     public static function encryptString($string, $key) {
         $encrypted = openssl_encrypt($string, "AES-256-CBC", $key, OPENSSL_RAW_DATA, $iv = openssl_random_pseudo_bytes(16));
@@ -27,6 +29,24 @@ class Util {
             $key .= '0';
         }
         return $key;
+    }
+
+
+    /**
+     *  将私钥转为以太坊地址
+     * @param $privateKey
+     * @return mixed
+     */
+    public static function getAddressFromPrivateKey($privateKey)
+    {
+        // 创建 EthereumUtil 实例
+        $util = new Util();
+
+        // 使用私钥获取钱包地址
+        $publicKey = $util->privateKeyToPublicKey($privateKey);
+        $address = $util->publicKeyToAddress($publicKey);
+
+        return $address;
     }
 
 

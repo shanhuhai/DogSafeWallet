@@ -21,5 +21,6 @@ Route::group([
     $router->get('/tool/qrcode', 'QrcodeController@index')->name('tool.qrcode.index');
     $router->post('/tool/qrcode', 'QrcodeController@postQrcode')->name('tool.qrcode.post');
 
+    $router->post('/wallet/pKToAddress', 'WalletController@pKToAddress')->name('wallet.pKToAddress');
 
 });

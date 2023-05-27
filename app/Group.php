@@ -7,10 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use BitWasp\Bitcoin\Bitcoin;
 use BitWasp\Bitcoin\Key\Factory\HierarchicalKeyFactory;
 
-use BitWasp\Bitcoin\Mnemonic\Bip39\Bip39Mnemonic;
 use BitWasp\Bitcoin\Mnemonic\Bip39\Bip39SeedGenerator;
 
-use BitWasp\Bitcoin\Mnemonic\MnemonicFactory;
 use Web3p\EthereumUtil\Util;
 
 
@@ -79,7 +77,7 @@ class Group extends Model
                     ['address' => $walletData['address']],
                     [
                         'group_id' => $this->id,
-                        'private_key' => \App\Util::encryptString($walletData['private_key'],\App\Util::padKey(env('ENCRYPTION_KEY')) ) ,
+                        'private_key' => \App\Helper::encryptString($walletData['private_key'],\App\Helper::padKey(env('ENCRYPTION_KEY')) ) ,
                         'address' => $walletData['address'],
                         'path'=> $walletData['path']
                         // Other fields

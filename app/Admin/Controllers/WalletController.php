@@ -5,11 +5,11 @@ namespace App\Admin\Controllers;
 use App\Group;
 use App\Wallet;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
-use App\Util;
-
+use App\Helper;
 
 
 function maskString($string, $starNum=3, $left=6, $right = 4)
@@ -45,12 +45,11 @@ class WalletController extends AdminController
         })->qrcode();
         $grid->column('private_key', __('Private key'))->display(function($val,$column){
             return maskString($val,3,2,1);
-        })->copyable();
+        })->copyable()->qrcode();
 
         $grid->column('balance', __('Balance'))->display(function ($val, $column){
             return $val;
         });
-        $grid->column('mnemonic', __('Mnemonic'));
         $grid->column('path', __('Path'));
         $grid->column('note', __('Note'));
 
@@ -73,7 +72,6 @@ class WalletController extends AdminController
         $show->field('id', __('Id'));
         $show->field('address', __('Address'));
         $show->field('private_key', __('Private key'));
-        $show->field('mnemonic', __('Mnemonic'));
         $show->field('path', __('Path'));
         $show->field('note', __('Note'));
         $show->field('created_at', __('Created at'));
@@ -93,15 +91,28 @@ class WalletController extends AdminController
 
         $groups = Group::all();
         $form->select('group_id', '分组')->options($groups->pluck('name', 'id'));
-        $form->text('address', __('Address'));
         $form->text('private_key', __('Private key'));
-        $form->textarea('mnemonic', __('Mnemonic'));
+        $form->text('address', __('Address'));
         $form->text('note',__('Note'));
         $form->text('path', __('Path'));
 
         $form->saving(function(Form $form){
-            $form->private_key = Util::encryptString($form->private_key, Util::padKey(env('ENCRYPTION_KEY')));
+            $form->private_key = Helper::encryptString($form->private_key, Helper::padKey(env('ENCRYPTION_KEY')));
         });
+
+
+
+        Admin::script(view('wallet.formScript')->render());
+//        $form->footer(function ($footer){
+//            return $footer->render().view('wallet.formScript')->render();
+//        });
         return $form;
+    }
+
+    public function pKToAddress(){
+        return [
+            'code'=>0,
+            'address'=>Helper::getAddressFromPrivateKey(\request()->get('pk'))
+        ];
     }
 }

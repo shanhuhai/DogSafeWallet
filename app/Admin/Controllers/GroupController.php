@@ -37,8 +37,6 @@ class GroupController extends AdminController
         });
         $grid->footer(function ($query) {
             return view('group.modal');
-
-
         });
         return $grid;
     }
