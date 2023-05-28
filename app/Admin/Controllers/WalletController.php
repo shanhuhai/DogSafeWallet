@@ -41,7 +41,7 @@ class WalletController extends AdminController
         $grid->column('id', __('Id'));
         $grid->column('group.name',__('Group name'));
         $grid->column('address', __('Address'))->display(function($val){
-            return maskString($val);
+            return maskString($val)."<span style='display: none' class='hidden-address'> $val </span>";
         })->qrcode();
         $grid->column('private_key', __('Private key'))->display(function($val,$column){
             return maskString($val,3,2,1);
@@ -56,6 +56,9 @@ class WalletController extends AdminController
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
 
+        $grid->footer(function($query){
+            return view('wallet.gridFooter');
+        });
         return $grid;
     }
 
