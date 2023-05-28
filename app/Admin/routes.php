@@ -17,10 +17,9 @@ Route::group([
     $router->resource('/wallet/groups', GroupController::class);
     $router->post('/wallet/group/generateWallets', 'GroupController@generateWallets')->name('group.generate_wallets');
 
-
     $router->get('/tool/qrcode', 'QrcodeController@index')->name('tool.qrcode.index');
-    $router->post('/tool/qrcode', 'QrcodeController@postQrcode')->name('tool.qrcode.post');
+    //Text to qrcode API
+    $router->get('/tool/create_qrcode', 'QrcodeController@createQrcode')->name('tool.qrcode.create');
 
     $router->post('/wallet/pKToAddress', 'WalletController@pKToAddress')->name('wallet.pKToAddress');
-
 });

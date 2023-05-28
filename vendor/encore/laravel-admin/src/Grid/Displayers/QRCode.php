@@ -32,22 +32,13 @@ SCRIPT;
             $content = call_user_func($formatter, $content, $this->row);
         }
 
-//        $img = sprintf(
-//            "<img src='https://api.qrserver.com/v1/create-qr-code/?size=%sx%s&data=%s' style='height:%spx;width:%spx;'/>",
-//            $width,
-//            $height,
-//            $content,
-//            $height,
-//            $width
-//        );
-
-        // 生成二维码图片
-        $qrcode = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(100)->generate($content);
-
-        // 显示二维码图片
-        $src = 'data:image/png;base64,' . base64_encode($qrcode);
-        $img = "<img src='$src' style='height:$height;width:$width;';>";
-
+        $img = sprintf(
+            "<img src='".route('admin.tool.qrcode.create')."?size=%s&text=%s' style='height:%spx;width:%spx;'/>",
+            max($width,$height),
+            $content,
+            $height,
+            $width
+        );
 
         return <<<HTML
 <a href="javascript:void(0);" class="grid-column-qrcode text-muted" data-content="{$img}" data-toggle='popover' tabindex='0'>

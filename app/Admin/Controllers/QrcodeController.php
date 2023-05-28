@@ -4,6 +4,8 @@ namespace App\Admin\Controllers;
 
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Layout\Content;
+use SimpleSoftwareIO\QrCode\Facades\QrCode;
+use Illuminate\Support\Facades\Response;
 
 class QrcodeController extends AdminController
 {
@@ -17,25 +19,24 @@ class QrcodeController extends AdminController
         return $content;
     }
 
-    public function postQrCode(Content $content){
+    public function createQrcode(){
 
-        $sourceText = \request()->get('sourceText');
-        if (empty($sourceText)) {
-            return '提交的文本不能为空!';
-        }
+        $text = request('text', 'Hello, World!'); // 默认文本为 "Hello, World!"
+        $size = request('size', 200); // 默认大小为 200
 
+
+        $text = rawurldecode($text);
         // 生成二维码图片
-        $qrcode = \SimpleSoftwareIO\QrCode\Facades\QrCode::format('png')->size(100)->generate($sourceText);
+        $qrCode = QrCode::format('png')->size($size)->generate($text);
 
-        // 显示二维码图片
-        $src = 'data:image/png;base64,' . base64_encode($qrcode);
-        $img = "<img src='$src' style='height:150px;width:150px;';>";
+        // 设置响应头为 image/png
+        $response = Response::make($qrCode, 200);
+        $response->header('Content-Type', 'image/png');
 
+        // 设置缓存过期时间为1天
+        $response->header('Cache-Control', 'public');
+        $response->header('Expires', now()->addDay()->format('D, d M Y H:i:s T'));
 
-        $content->view('tool.qrcode',[
-            'img'=> $img ,
-        ]);
-
-        return $content;
+        return $response;
     }
 }
