@@ -3,6 +3,7 @@
 namespace App\Admin\Controllers;
 
 use App\Group;
+use App\Helper;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -73,8 +74,9 @@ class GroupController extends AdminController
         $form->textarea('mnemonic', __('Mnemonic'));
         $form->text('wallet_count', __('Wallet count'));
 
-
-
+        $form->saving(function(Form $form){
+            $form->mnemonic = Helper::encryptString($form->mnemonic, Helper::padKey(env('ENCRYPTION_KEY')));
+        });
         return $form;
     }
 

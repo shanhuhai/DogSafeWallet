@@ -26,12 +26,13 @@ class Group extends Model
     public function generateWallets($walletCount, $coinType=60)
     {
         if ($walletCount > 0 && !empty($this->mnemonic)) {
-            // Set up Bitcoin network
-            $network = Bitcoin::getNetwork();
 
             // Generate a seed from mnemonic/password
             $seedGenerator = new Bip39SeedGenerator();
-            $seed = $seedGenerator->getSeed($this->mnemonic, '');
+
+            $seed = Helper::decryptString($this->mnemonic,Helper::padKey(env('ENCRYPTION_KEY')));
+          //  $seed = 'process minute awesome throw always lounge alone almost spice door october cattle';
+            $seed = $seedGenerator->getSeed($seed, '');
 
             // Derive the master key from the seed
             $hdFactory = new HierarchicalKeyFactory();
@@ -60,6 +61,7 @@ class Group extends Model
                     $finalPrivateKey =  $privateKey->toWif();
                 }
 
+                $finalPrivateKey = Helper::encryptString($finalPrivateKey, Helper::padKey(env('ENCRYPTION_KEY')));
                 // Build wallet data
                 $walletData = [
                     'private_key' => $finalPrivateKey,
@@ -77,7 +79,7 @@ class Group extends Model
                     ['address' => $walletData['address']],
                     [
                         'group_id' => $this->id,
-                        'private_key' => \App\Helper::encryptString($walletData['private_key'],\App\Helper::padKey(env('ENCRYPTION_KEY')) ) ,
+                        'private_key' => $walletData['private_key'] ,
                         'address' => $walletData['address'],
                         'path'=> $walletData['path']
                         // Other fields
