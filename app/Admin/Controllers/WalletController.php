@@ -12,14 +12,6 @@ use Encore\Admin\Show;
 use App\Helper;
 
 
-function maskString($string, $starNum=3, $left=6, $right = 4)
-{
-    $length = strlen($string);
-    if ($left==0 && $right==0) {
-        return str_repeat('*', $starNum);
-    }
-    return substr($string, 0, $left) . str_repeat('*', $starNum) . substr($string, -$right);
-}
 class WalletController extends AdminController
 {
     /**
@@ -37,17 +29,34 @@ class WalletController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Wallet());
+        $grid->filter(function($filter){
+            $filter->disableIdFilter();
+            // 在这里添加字段过滤器
+            $filter->like('address', __('Address'));
+        });
+
+        $grid->selector(function (Grid\Tools\Selector $selector) {
+            $groups = Group::all();
+            $selector->selectOne('group_id', '分组', $groups->pluck('name', 'id'));
+        });
+
+        $grid->model()->orderBy('id', 'desc');
 
         $grid->column('id', __('Id'));
         $grid->column('group.name',__('Group name'));
         $grid->column('address', __('Address'))->display(function($val){
-            return maskString($val)."<span style='display: none' class='hidden-address'> $val </span>";
-        })->qrcode();
-        $grid->column('private_key', __('Private key'))->display(function($val,$column){
-            return maskString($val,3,2,1);
+            $val = mb_strtolower($val);
+            return Helper::maskString($val)."<span style='display: none' class='hidden-address'> $val </span>";
+        })->copyable()->qrcode();
+
+        $grid->column(env('PLAIN_PRIVATE_KEY') ? 'decrypted_private_key': 'private_key', __('Private key'))->display(function($val,$column){
+            return Helper::maskString($val);
         })->copyable()->qrcode();
 
         $grid->column('balance', __('Balance'))->display(function ($val, $column){
+            return $val;
+        });
+        $grid->column('zksBalance', __('zksBalance'))->display(function ($val, $column){
             return $val;
         });
         $grid->column('path', __('Path'));

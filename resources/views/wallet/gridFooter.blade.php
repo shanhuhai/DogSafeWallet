@@ -1,3 +1,4 @@
+<script src="{{ asset('js/app.js') }}"></script>
 <script>
     const fetchBalance = async (address) => {
         try {
@@ -15,8 +16,6 @@
             });
 
             const data = await response.json();
-
-            console.log(data)
             // 处理返回的数据，将十六进制的余额转为十进制
             const balance = parseInt(data.result, 16);
 
@@ -25,7 +24,6 @@
 
             // 保留 8 位小数
             const balanceEthFormatted = balanceEth.toFixed(4);
-
             return balanceEthFormatted;
         } catch (error) {
             console.error('Error fetching balance:', error);
@@ -33,13 +31,15 @@
         }
     };
 
-     $('.column-address').find('span.hidden-address').each(async function(){
-         let address = $(this).html().trim();
+    const provider = new zksync.Provider("https://mainnet.era.zksync.io");
+    $('.column-address').find('span.hidden-address').each(async function(){
+        let address = $(this).html().trim();
 
         const balance = await fetchBalance(address);
         $(this).parent().siblings('.column-balance').html(balance);
+         const zksBalance = await provider.getBalance(address) ;
+        $(this).parent().siblings('.column-zksBalance').html(ethers.utils.formatEther(zksBalance));
 
-         console.log(`Address: ${address}, Balance: ${balance}`);
      });
 
 
