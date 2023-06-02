@@ -26,11 +26,15 @@ class GroupController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Group());
-
+        $grid->model()->orderBy('id', 'desc');
         $grid->column('id', __('Id'));
         $grid->column('name', __('Name'));
-        $grid->column('mnemonic', __('Mnemonic'));
-        $grid->column('wallet_count', __('Wallet count'));
+     //   $grid->column('mnemonic', __('Mnemonic'));
+        $grid->column('wallet_count', __('Wallet count'))->display(function(){
+            // 查询当前分组下的钱包数量
+            $walletCount = $this->wallets()->count();
+            return $walletCount;
+        });
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
         $grid->column('generate_wallets', 'Generate Wallets')->display(function () {
