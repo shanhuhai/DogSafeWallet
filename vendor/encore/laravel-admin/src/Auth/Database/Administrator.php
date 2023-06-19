@@ -2,6 +2,8 @@
 
 namespace Encore\Admin\Auth\Database;
 
+use App\AdminUserConfig;
+use Encore\Admin\Form\Field\HasMany;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
@@ -88,5 +90,10 @@ class Administrator extends Model implements AuthenticatableContract
         $relatedModel = config('admin.database.permissions_model');
 
         return $this->belongsToMany($relatedModel, $pivotTable, 'user_id', 'permission_id');
+    }
+
+    public function configs()
+    {
+        return $this->hasMany(AdminUserConfig::class, 'user_id', 'id');
     }
 }
