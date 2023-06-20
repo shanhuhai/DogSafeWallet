@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Helper;
 use Encore\Admin\Auth\Database\Administrator;
 use Illuminate\Http\Request;
 use Encore\Admin\Controllers\AdminController;
@@ -17,14 +18,23 @@ class AdminUserConfigController extends AdminController
         // 创建一个表单
         $form = new Form(new Administrator());
 
-        $config = Admin::user()->configs->pluck('value', 'key');
+        $form->switch('show_plain_private_key', __('Show Plain Private Key'))->value(Helper::config('show_plain_private_key'));
 
-
-        $form->switch('show_plain_private_key', __('Show Plain Private Key'))->value($config['show_plain_private_key']);
-
-        $form->switch('save_secret_key', __('Save secret Key'))->value($config['save_secret_key']);
+        $form->switch('save_secret_key', __('Save secret Key'))->value(Helper::config('save_secret_key',0));
         // 设置提交按钮
         $form->setAction(route('admin.user.config.save'));
+
+        $form->disableEditingCheck();
+
+        $form->disableCreatingCheck();
+
+        $form->disableViewCheck();
+
+        $form->tools(function (Form\Tools $tools) {
+            $tools->disableDelete();
+            $tools->disableView();
+            $tools->disableList();
+        });
 
         // 渲染表单
         $content->body($form);
@@ -41,9 +51,7 @@ class AdminUserConfigController extends AdminController
         $userId = Admin::user()->id;
 
         foreach ($data as $key=>$val) {
-            AdminUserConfig::updateOrCreate([
-                'user_id'=>$userId,
-                'key'=>$key,
+            AdminUserConfig::updateOrCreate(['user_id'=>$userId, 'key'=>$key],[
                 'value'=>$val == 'on'? 1: 0
             ]);
         }
