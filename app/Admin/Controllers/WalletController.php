@@ -28,6 +28,8 @@ class WalletController extends AdminController
      */
     protected function grid()
     {
+         Helper::config('show_plain_private_key');
+
         $grid = new Grid(new Wallet());
         $grid->filter(function($filter){
             $filter->disableIdFilter();
@@ -49,9 +51,18 @@ class WalletController extends AdminController
             return Helper::maskString($val)."<span style='display: none' class='hidden-address'> $val </span>";
         })->copyable()->qrcode();
 
-        $grid->column(env('PLAIN_PRIVATE_KEY') ? 'decrypted_private_key': 'private_key', __('Private key'))->display(function($val,$column){
-            return Helper::maskString($val);
-        })->copyable()->qrcode();
+        $grid->column( 'encrypted_private_key', __('Private key'))->display(function($val,$column){
+            $return = <<<HTML
+<a href="javascript:void(0);" class="private-key-grid-column-qrcode text-muted"  data-toggle='popover' tabindex='0'>
+    <i class="fa fa-qrcode"></i>
+</a>&nbsp;
+HTML;
+
+            $return .=  "<span>".Helper::maskString($val)."</span>"."<div style='display: none'>$val</div>";
+            //复制按钮
+            return $return.'<a href="javascript:void(0);" class="private-key-grid-column-copyable text-muted" data-content="'.$val.'" title="Copied!" data-placement="bottom">
+    <i class="fa fa-copy"></i>';
+        });
 
         $grid->column('balance', __('Balance'))->display(function ($val, $column){
             return $val;
@@ -62,11 +73,8 @@ class WalletController extends AdminController
         $grid->column('path', __('Path'));
         $grid->column('note', __('Note'));
 
-        $grid->column('created_at', __('Created at'));
-        $grid->column('updated_at', __('Updated at'));
-
-        $grid->footer(function($query){
-            return view('wallet.gridFooter');
+        $grid->footer(function($query) use ($grid) {
+            return view('wallet.gridFooter')->with('tableId',$grid->tableID);
         });
         return $grid;
     }
@@ -100,24 +108,35 @@ class WalletController extends AdminController
     protected function form()
     {
         $form = new Form(new Wallet());
-
         $groups = Group::all();
+
         $form->select('group_id', '分组')->options($groups->pluck('name', 'id'));
         $form->text('private_key', __('Private key'));
+
         $form->text('address', __('Address'));
         $form->text('note',__('Note'));
         $form->text('path', __('Path'));
+        $form->hidden('encrypted_private_key', 'Encrypted private key');
 
-        $form->saving(function(Form $form){
-            $form->private_key = Helper::encryptString($form->private_key, Helper::padKey(env('ENCRYPTION_KEY')));
+        $form->ignore(['private_key']);
+
+
+        $form->footer(function ($footer) {
+            // 去掉`查看`checkbox
+            $footer->disableViewCheck();
+
+            // 去掉`继续编辑`checkbox
+            $footer->disableEditingCheck();
+
+            // 去掉`继续创建`checkbox
+            $footer->disableCreatingCheck();
+
         });
 
 
-
+        Admin::js('js/app.js');
         Admin::script(view('wallet.formScript')->render());
-//        $form->footer(function ($footer){
-//            return $footer->render().view('wallet.formScript')->render();
-//        });
+
         return $form;
     }
 

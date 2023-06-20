@@ -1,6 +1,6 @@
 <?php
 namespace App;
-
+use Encore\Admin\Facades\Admin;
 use Web3p\EthereumUtil\Util;
 
 class Helper {
@@ -58,5 +58,15 @@ class Helper {
         return $address;
     }
 
+
+    /** 获取当前用户的个人设置
+     * @param $key
+     * @param $default
+     * @return int|mixed
+     */
+    public static function config($key, $default = 1){
+        $configs  = Admin::user()->configs->pluck('value','key');
+        return $configs->has($key) ?  $configs[$key] : $default;
+    }
 
 }
