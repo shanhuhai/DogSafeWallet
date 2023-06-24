@@ -146,4 +146,21 @@ HTML;
             'address'=>Helper::getAddressFromPrivateKey(\request()->get('pk'))
         ];
     }
+
+    public function ajaxSave(){
+        $wallets = request()->json('wallets');
+        $mnemonicId = request()->json('mnemonic_id');
+        $groupId = request()->json('group_id');
+        // 遍历钱包数据并存入数据库
+        foreach ($wallets as $wallet) {
+            Wallet::create([
+                'mnemonic_id'=>$mnemonicId,
+                'group_id'=>$groupId,
+                'encrypted_private_key' => $wallet['privateKey'],
+                'address' => $wallet['address'],
+            ]);
+        }
+
+        return response()->json(['message' => '钱包数据已成功保存']);
+    }
 }

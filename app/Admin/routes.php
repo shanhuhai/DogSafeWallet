@@ -12,6 +12,7 @@ Route::group([
 ], function (Router $router) {
 
     $router->get('/', 'HomeController@index')->name('home');
+    $router->post('/wallets/ajax-save','WalletController@ajaxSave')->name('wallet.ajaxSave');
     $router->resource('/wallets', 'WalletController');
 
     $router->resource('/wallet/groups', GroupController::class);

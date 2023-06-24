@@ -32,7 +32,15 @@ class MnemonicController extends AdminController
         $grid->model()->orderBy('id', 'desc');
         $grid->column('id', __('Id'));
         $grid->column('encrypted_content', __('Encrypted content'))->display(function ($val){
-            return Helper::maskString($val);
+            $return = <<<HTML
+<a href="javascript:void(0);" class="mnemonic-grid-column-qrcode text-muted"  data-toggle='popover' tabindex='0'>
+    <i class="fa fa-qrcode"></i>
+</a>&nbsp;
+HTML;
+            $return .=  "<span>".Helper::maskString($val)."</span>"."<div style='display: none'>$val</div>";
+            //复制按钮
+            return $return.'<a href="javascript:void(0);" class="mnemonic-grid-column-copyable text-muted" data-content="'.$val.'" title="Copied!" data-placement="bottom">
+    <i class="fa fa-copy"></i>';
         });
         $grid->column('wallet_count', __('Wallet count'))->display(function(){
             // 查询当前分组下的钱包数量
@@ -41,14 +49,13 @@ class MnemonicController extends AdminController
         });
 
         $grid->column('generate_wallets', 'Generate Wallets')->display(function () {
-            return '<button class="btn btn-primary generate-wallets-btn" data-mnemonic-id="'.$this->id.'">Generate Wallets</button>';
+            return '<button class="btn btn-primary generate-wallets-btn" data-mnemonic-id="'.$this->id.'" data-encrypted-mnemonic="'.$this->encrypted_content.'">Generate Wallets</button>';
         });
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
-        $grid->footer(function ($query) {
+        $grid->footer(function ($query) use($grid){
             $groups = Group::all()->pluck('name', 'id')->toArray();
-//            dd($groups);
-            return view('mnemonic.modal')->with('groups',$groups);
+            return view('mnemonic.modal')->with('groups',$groups)->with('tableId',$grid->tableID);
         });
         return $grid;
     }

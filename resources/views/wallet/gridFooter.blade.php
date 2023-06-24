@@ -41,7 +41,7 @@
 
             $(this).tooltip('show');
         }));
-
+        //处理二维码
         $('.private-key-grid-column-qrcode').popover({
             html: true,
             container: 'body',
