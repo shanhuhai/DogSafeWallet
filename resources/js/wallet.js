@@ -12,7 +12,7 @@ class Wallet {
     static generateWalletsFromMnemonic(mnemonic, coinCode, numWallets, offset=0) {
         const wallets = [];
         const seed = bip39.mnemonicToSeedSync(mnemonic);
-        console.log(offset)
+       
 
         for (let i = offset; i < numWallets+offset; i++) {
             let privateKey, address, derivePath;

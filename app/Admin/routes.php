@@ -30,4 +30,6 @@ Route::group([
     $router->get('/user/config', 'AdminUserConfigController@index')->name('user.config');
     $router->post('/user/config/save', 'AdminUserConfigController@save')->name('user.config.save');
 
+    //网络管理
+    $router->resource('networks', NetworkController::class);
 });

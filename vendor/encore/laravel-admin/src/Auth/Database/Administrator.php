@@ -3,6 +3,9 @@
 namespace Encore\Admin\Auth\Database;
 
 use App\AdminUserConfig;
+use App\AdminUserNetwork;
+use App\Helper;
+use App\Network;
 use Encore\Admin\Form\Field\HasMany;
 use Encore\Admin\Traits\DefaultDatetimeFormat;
 use Illuminate\Auth\Authenticatable;
@@ -23,6 +26,8 @@ class Administrator extends Model implements AuthenticatableContract
     use DefaultDatetimeFormat;
 
     protected $fillable = ['username', 'password', 'name', 'avatar'];
+
+    protected $appends = ['show_plain_private_key'];
 
     /**
      * Create a new Eloquent model instance.
@@ -96,4 +101,15 @@ class Administrator extends Model implements AuthenticatableContract
     {
         return $this->hasMany(AdminUserConfig::class, 'user_id', 'id');
     }
+
+    public function networks(){
+        return $this->belongsToMany(Network::class, 'admin_user_networks', 'user_id' ,'network_id');
+    }
+    
+    public function getShowPlainPrivateKeyAttribute()
+    {
+        return Helper::config('show_plain_private_key');
+    }
+
+
 }

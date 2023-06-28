@@ -64,17 +64,22 @@ HTML;
     <i class="fa fa-copy"></i>';
         });
 
-        $grid->column('balance', __('Balance'))->display(function ($val, $column){
-            return $val;
-        });
-        $grid->column('zksBalance', __('zksBalance'))->display(function ($val, $column){
-            return $val;
-        });
+        $selectedNetworks = auth()->user()->networks;
+
+        //根据用户的选择确定显示哪些列
+        foreach ($selectedNetworks as $network) {
+            $grid->column("network-{$network->id}-balance", $network->name."(". $network->currency_symbol.")")->display(function () use ($network) {
+               return "";
+            });
+        }
+
         $grid->column('path', __('Path'));
         $grid->column('note', __('Note'));
 
-        $grid->footer(function($query) use ($grid) {
-            return view('wallet.gridFooter')->with('tableId',$grid->tableID);
+        $grid->footer(function($query) use ($grid, $selectedNetworks) {
+            return view('wallet.gridFooter')
+                ->with('tableId', $grid->tableID)
+                ->with('networks', $selectedNetworks->toJson());
         });
         return $grid;
     }

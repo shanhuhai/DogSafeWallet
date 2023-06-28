@@ -3,6 +3,7 @@
 
     var SHOW_PLAIN_PRIVATE_KEY = {{ \App\Helper::config('show_plain_private_key') }};
     var tableId = '{{ $tableId }}';
+    var networks = {!!  $networks !!};
 
 
     $(function(){
@@ -67,36 +68,65 @@
 
   //  https://mainnet.infura.io/v3/INFURA_API_KEY
 
-    const fetchBalance = async (address) => {
+    async function getBalance(walletAddress, rpcUrl, chainId) {
         try {
-            const provider = new ethers.providers.JsonRpcProvider('https://cloudflare-eth.com');
+            // 创建一个以太坊提供者，连接到指定的网络
+            const provider = new ethers.providers.JsonRpcProvider(rpcUrl, { chainId });
 
-            const balanceWei = await provider.getBalance(address);
-            const balanceEth = ethers.utils.formatEther(balanceWei);
+            // 获取钱包地址对应的以太坊余额
+            const balance = await provider.getBalance(walletAddress);
 
-            // Keep 8 decimal places
-            const balanceEthFormatted = parseFloat(balanceEth).toFixed(4);
+           // return 0;
+            // 将以太坊余额转换为可读格式
+           const formattedBalance = parseFloat(ethers.utils.formatEther(balance)).toFixed(4);
 
-            return balanceEthFormatted;
+           return formattedBalance;
         } catch (error) {
             console.error('Error fetching balance:', error);
-            throw error;
+            return null;
         }
     }
 
-    const provider = new zksync.Provider("https://mainnet.era.zksync.io");
+
     $('.column-address').find('span.hidden-address').each(async function(){
         let address = $(this).html().trim();
+        let t = this;
 
-        const balance = await fetchBalance(address);
-        $(this).parent().siblings('.column-balance').html(balance);
-         let zksBalance = await provider.getBalance(address) ;
+        networks.forEach(function(network ){
+            getBalance(address, network.rpc_url, network.chain_id)
+                .then((balance) => {
+                    console.log(network.name + ' Balance '+balance)
+                   // console.log($(t).parent().siblings('column-network-'+id+'-balance'))
+                    $(t).parent().siblings('.column-network-'+network.id+'-balance').html(balance );
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        });
+        //
+        // //查询以太坊主网余额
+        // getBalance(address, 'https://cloudflare-eth.com', 1)
+        //     .then((balance) => {
+        //         console.log('Wallet Balance:', balance);
+        //         $(this).parent().siblings('.column-balance').html(balance);
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error:', error);
+        //     });
+        //
+        // //查询zksync余额
+        // getBalance(address, 'https://mainnet.era.zksync.io', 324)
+        //     .then((balance) => {
+        //         console.log('Wallet Balance:', balance);
+        //         $(this).parent().siblings('.column-zksBalance').html(balance);
+        //     })
+        //     .catch((error) => {
+        //         console.error('Error:', error);
+        //     });
+        //binance 余额
 
-        zksBalance = ethers.utils.formatEther(zksBalance);
-        zksBalance = parseFloat(zksBalance).toFixed(4);
-        $(this).parent().siblings('.column-zksBalance').html(zksBalance);
 
-     });
+    });
 
 
 </script>
