@@ -33,6 +33,47 @@
 
 ### 手动安装
 
+下载代码  git clone https://github.com/shanhuhai/DogSafeWallet.git
+
+配置Nginx：
+
+配置.env：
+
+    cp .env.example .env
+
+修改 .env 中的 `APP_URL` 为你的网站地址。
+
+```
+APP_URL=https://wallet.dognav.com
+```
+
+修改 .env 中的数据库配置：
+
+```
+DB_HOST=127.0.0.1  //数据库IP
+DB_PORT=3306   // 数据库端口
+DB_DATABASE=DogSafeWallet  //数据库名称
+DB_USERNAME=root   //数据库用户名
+DB_PASSWORD=123456  //数据库密码
+```
+
+修改目录权限
+
+```
+chmod -R 755 storage/
+```
+
+创建上传目录
+
+```
+mkdir public/upload/images
+chmod -R 755 public/upload/images
+```
+
+导入数据库
+
+
+
 ### Docker安装
 
 
