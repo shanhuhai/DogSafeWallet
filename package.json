@@ -25,6 +25,9 @@
         "vue-template-compiler": "^2.7.14"
     },
     "dependencies": {
-        "bitcoinjs-lib": "^4.0.3"
+        "bitcoinjs-lib": "^4.0.5",
+        "ethereumjs-util": "^7.1.5",
+        "zksync": "^0.13.1",
+        "zksync-web3": "^0.14.3"
     }
 }
