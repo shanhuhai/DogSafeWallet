@@ -14,6 +14,10 @@ window.CryptUtils = require('./cryptUtils');
 window.Wallet = require('./wallet')
 window.QRCode = require('./qrcode')
 
+window.ethUtil = require('ethereumjs-util');
+window.bitcoin = require('bitcoinjs-lib');
+
+
 //window.Vue = require('vue');
 
 /**

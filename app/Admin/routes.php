@@ -2,14 +2,24 @@
 
 use Illuminate\Routing\Router;
 
-Admin::routes();
 
+Route::group([
+    'prefix'        => config('admin.route.prefix'),
+    'namespace'     => config('admin.route.namespace'),
+    'middleware' => ['web']
+    ], function(Router $router){
+
+    $router->get('auth/register', 'AuthController@getRegister')->name('admin.register');
+    $router->post('auth/register', 'AuthController@postRegister');
+});
+Admin::routes();
 Route::group([
     'prefix'        => config('admin.route.prefix'),
     'namespace'     => config('admin.route.namespace'),
     'middleware'    => config('admin.route.middleware'),
     'as'            => config('admin.route.prefix') . '.',
 ], function (Router $router) {
+
 
     $router->get('/', 'HomeController@index')->name('home');
     $router->post('/wallets/ajax-save','WalletController@ajaxSave')->name('wallet.ajaxSave');

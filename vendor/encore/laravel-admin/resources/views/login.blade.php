@@ -6,7 +6,7 @@
   <title>{{config('admin.title')}} | {{ trans('admin.login') }}</title>
   <!-- Tell the browser to be responsive to screen width -->
   <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
-  
+
   @if(!is_null($favicon = Admin::favicon()))
   <link rel="shortcut icon" href="{{$favicon}}">
   @endif
@@ -77,6 +77,9 @@
         </div>
         <!-- /.col -->
       </div>
+
+{{--        <a href="#">忘记密码？</a><br>--}}
+        <a href="{{ route('admin.register') }}" class="text-center">去注册</a>
     </form>
 
   </div>

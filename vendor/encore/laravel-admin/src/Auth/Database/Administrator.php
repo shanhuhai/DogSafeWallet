@@ -25,7 +25,7 @@ class Administrator extends Model implements AuthenticatableContract
     use HasPermissions;
     use DefaultDatetimeFormat;
 
-    protected $fillable = ['username', 'password', 'name', 'avatar'];
+    protected $fillable = ['username', 'email', 'password', 'name', 'avatar'];
 
     protected $appends = ['show_plain_private_key'];
 
@@ -105,7 +105,7 @@ class Administrator extends Model implements AuthenticatableContract
     public function networks(){
         return $this->belongsToMany(Network::class, 'admin_user_networks', 'user_id' ,'network_id');
     }
-    
+
     public function getShowPlainPrivateKeyAttribute()
     {
         return Helper::config('show_plain_private_key');
