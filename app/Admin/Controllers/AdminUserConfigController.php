@@ -40,7 +40,7 @@ class AdminUserConfigController extends AdminController
             $tools->disableList();
         });
 
-        $form->listbox('networks', __('Networks'))->options(Network::all()->pluck('name', 'id'))->value(Admin::user()->networks->pluck('id')->toArray());
+        $form->listbox('networks', __('Select networks'))->options(Network::all()->pluck('name', 'id'))->value(Admin::user()->networks->pluck('id')->toArray());
         return $form;
     }
 

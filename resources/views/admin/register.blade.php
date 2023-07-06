@@ -11,7 +11,7 @@
 <body class="hold-transition register-page">
 <div class="register-box">
     <div class="register-logo">
-        <a href="{{ admin_base_path('/') }}">{{config('admin.name')}}</a>
+        <b><a href="{{ admin_base_path('/') }}">{{config('admin.name')}}</a></b>
     </div>
 
 
