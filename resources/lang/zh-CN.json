@@ -1,0 +1,21 @@
+{
+    "ID": "ID",
+    "Group name":"分组名称",
+    "Address":"钱包地址",
+    "Private key": "私钥(明文)",
+    "Private key(Encrypted)": "私钥（加密）",
+    "Path":"钱包路径",
+    "Note": "备注",
+    "Name": "名称",
+    "Group":"分组",
+    "Created at": "创建时间",
+    "Updated at":"更新时间",
+    "Budget": "预算",
+    "Mnemonic": "助记词",
+    "Wallet count": "钱包数量",
+    "Generate wallets": "生成钱包",
+    "Show Plain Private Key": "使用明文私钥&&助记词",
+    "Select networks": "选择网络"
+
+
+}

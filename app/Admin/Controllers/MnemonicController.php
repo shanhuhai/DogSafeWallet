@@ -31,7 +31,7 @@ class MnemonicController extends AdminController
 
         $grid->model()->orderBy('id', 'desc');
         $grid->column('id', __('Id'));
-        $grid->column('encrypted_content', __('Encrypted content'))->display(function ($val){
+        $grid->column('encrypted_content', __('Mnemonic'))->display(function ($val){
             $return = <<<HTML
 <a href="javascript:void(0);" class="mnemonic-grid-column-qrcode text-muted"  data-toggle='popover' tabindex='0'>
     <i class="fa fa-qrcode"></i>
@@ -48,11 +48,12 @@ HTML;
             return $walletCount;
         });
 
-        $grid->column('generate_wallets', 'Generate Wallets')->display(function () {
-            return '<button class="btn btn-primary generate-wallets-btn" data-mnemonic-id="'.$this->id.'" data-encrypted-mnemonic="'.$this->encrypted_content.'">Generate Wallets</button>';
-        });
+
         $grid->column('created_at', __('Created at'));
         $grid->column('updated_at', __('Updated at'));
+        $grid->column('generate_wallets', __('Generate wallets'))->display(function () {
+            return '<button class="btn btn-primary generate-wallets-btn" data-mnemonic-id="'.$this->id.'" data-encrypted-mnemonic="'.$this->encrypted_content.'">'. __('Generate wallets') .'</button>';
+        });
         $grid->footer(function ($query) use($grid){
             $groups = Group::all()->pluck('name', 'id')->toArray();
             return view('mnemonic.modal')->with('groups',$groups)->with('tableId',$grid->tableID);
