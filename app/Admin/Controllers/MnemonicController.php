@@ -5,7 +5,7 @@ namespace App\Admin\Controllers;
 use App\Group;
 use App\Helper;
 use App\Mnemonic;
-use Encore\Admin\Admin;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Controllers\AdminController;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
@@ -29,7 +29,7 @@ class MnemonicController extends AdminController
     {
         $grid = new Grid(new Mnemonic());
 
-        $grid->model()->orderBy('id', 'desc');
+        $grid->model()->where('user_id', Admin::user()->id)->orderBy('id', 'desc');
         $grid->column('id', __('Id'));
         $grid->column('encrypted_content', __('Mnemonic'))->display(function ($val){
             $return = <<<HTML
@@ -91,10 +91,14 @@ HTML;
         $form->text('content',  __('Mnemonic'))->append('<button id="generate-mnemonic-btn" class="btn btn-success btn-xs">生成</button>');
         $form->text('encrypted_content', __('Encrypted mnemonic'));
 
+
+        $UID = Admin::user()->id;
+        $form->hidden('user_id')->value($UID);
         Admin::js('/js/app.js');
         $keyString = env('ENCRYPTION_KEY');
         $script =<<<ETO
-var keyString = '$keyString';
+
+ var ENCRYPTION_KEY = CryptUtils.getEncryptionKey($UID);
  $(function() {
         // 绑定生成助记词按钮的点击事件
         $('#generate-mnemonic-btn').click(async function(e) {
@@ -109,14 +113,14 @@ var keyString = '$keyString';
             // 使用 bip39 生成助记词
             let mnemonic = generateRandomMnemonic(12);
           ;
-            let encryptString = await CryptUtils.encryptString(mnemonic,keyString);
+            let encryptString = await CryptUtils.encryptString(mnemonic,ENCRYPTION_KEY);
             // 将助记词填入输入框
             $('#encrypted_content').val(encryptString);
             $('#content').val(mnemonic);
         }
         $('#content').change(async function(){
             let mnemonic =  $(this).val()
-            let encryptString = await CryptUtils.encryptString(mnemonic,keyString);
+            let encryptString = await CryptUtils.encryptString(mnemonic,ENCRYPTION_KEY);
             $('#encrypted_content').val(encryptString);
         });
 
