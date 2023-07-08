@@ -1,7 +1,7 @@
 <script src="{{ asset('js/app.js') }}"></script>
 <script>
 
-    var SHOW_PLAIN_PRIVATE_KEY = {{ \App\Helper::config('show_plain_private_key') }};
+    var SHOW_PLAIN_PRIVATE_KEY = {{ $SHOW_PLAIN_PRIVATE_KEY }};
     var tableId = '{{ $tableId }}';
     var networks = {!!  $networks !!};
     var UID = {{ Admin::user()->id }};
@@ -44,13 +44,19 @@
             $(this).tooltip('show');
         }));
         //处理二维码
-        $('.private-key-grid-column-qrcode').popover({
+        $('.private-key-grid-column-qrcode,.address-grid-column-qrcode').popover({
             html: true,
             container: 'body',
             trigger: 'focus',
             content:  function () {
                 // 获取后面的<span>标签
-                let content = SHOW_PLAIN_PRIVATE_KEY? $(this).nextAll('div').data('decrypted'):$(this).nextAll('div').html();
+                const isAddress = $(this).hasClass('address-grid-column-qrcode');
+                let content = '';
+                if (isAddress) {
+                    content =$(this).nextAll('div').html();
+                } else {
+                    content = SHOW_PLAIN_PRIVATE_KEY? $(this).nextAll('div').data('decrypted'):$(this).nextAll('div').html();
+                }
                 qrcodeNode = $('<div>').css({ width:150, height:150});
                 var qrcode = new QRCode(qrcodeNode[0], {
                     colorDark : "#000000",
@@ -89,7 +95,7 @@
     }
 
 
-    $('.column-address').find('span.hidden-address').each(async function(){
+    $('.column-address').find('div').each(async function(){
         let address = $(this).html().trim();
         let t = this;
 
@@ -104,27 +110,7 @@
                     console.error('Error:', error);
                 });
         });
-        //
-        // //查询以太坊主网余额
-        // getBalance(address, 'https://cloudflare-eth.com', 1)
-        //     .then((balance) => {
-        //         console.log('Wallet Balance:', balance);
-        //         $(this).parent().siblings('.column-balance').html(balance);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error:', error);
-        //     });
-        //
-        // //查询zksync余额
-        // getBalance(address, 'https://mainnet.era.zksync.io', 324)
-        //     .then((balance) => {
-        //         console.log('Wallet Balance:', balance);
-        //         $(this).parent().siblings('.column-zksBalance').html(balance);
-        //     })
-        //     .catch((error) => {
-        //         console.error('Error:', error);
-        //     });
-        //binance 余额
+
 
 
     });

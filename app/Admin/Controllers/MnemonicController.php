@@ -32,7 +32,9 @@ class MnemonicController extends AdminController
 
         $grid->model()->where('user_id', Admin::user()->id)->orderBy('id', 'desc');
         $grid->column('id', __('Id'));
-        $grid->column('encrypted_content', __('Mnemonic'))->display(function ($val){
+
+        $SHOW_PLAIN_PRIVATE_KEY = Helper::config('show_plain_private_key');
+        $grid->column('encrypted_content', $SHOW_PLAIN_PRIVATE_KEY?__('Mnemonic'):__('Mnemonic(Encrypted)'))->display(function ($val){
             $return = <<<HTML
 <a href="javascript:void(0);" class="mnemonic-grid-column-qrcode text-muted"  data-toggle='popover' tabindex='0'>
     <i class="fa fa-qrcode"></i>
@@ -55,9 +57,12 @@ HTML;
         $grid->column('generate_wallets', __('Generate wallets'))->display(function () {
             return '<button class="btn btn-primary generate-wallets-btn" data-mnemonic-id="'.$this->id.'" data-encrypted-mnemonic="'.$this->encrypted_content.'">'. __('Generate wallets') .'</button>';
         });
-        $grid->footer(function ($query) use($grid){
+        $grid->footer(function ($query) use($grid,$SHOW_PLAIN_PRIVATE_KEY){
             $groups = Helper::groups();
-            return view('mnemonic.modal')->with('groups',$groups)->with('tableId',$grid->tableID);
+            return view('mnemonic.modal')
+                ->with('groups',$groups)
+                ->with('tableId',$grid->tableID)
+                ->with('SHOW_PLAIN_PRIVATE_KEY', $SHOW_PLAIN_PRIVATE_KEY);
         });
         return $grid;
     }

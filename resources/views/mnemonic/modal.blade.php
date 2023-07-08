@@ -156,7 +156,7 @@
 
 
 
-        var SHOW_PLAIN_PRIVATE_KEY = {{ \App\Helper::config('show_plain_private_key') }};
+        var SHOW_PLAIN_PRIVATE_KEY = {{ $SHOW_PLAIN_PRIVATE_KEY }};
         var tableId = '{{ $tableId }}';
         //处理复制
         $('#'+tableId).on('click','.mnemonic-grid-column-copyable',(async function (e) {

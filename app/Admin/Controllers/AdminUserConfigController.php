@@ -27,7 +27,7 @@ class AdminUserConfigController extends AdminController
         // 创建一个表单
         $form = new Form(new Administrator());
 
-        $form->switch('show_plain_private_key', __('Show Plain Private Key'))->value(Helper::config('save_secret_key',0));
+        $form->switch('show_plain_private_key', __('Show Plain Private Key'))->value(Helper::config('show_plain_private_key',0));
         // $form->switch('save_secret_key', __('Save secret Key'))->value(Helper::config('save_secret_key',0));
         // 设置提交按钮
         $form->setAction(route('admin.user.config.save'));
