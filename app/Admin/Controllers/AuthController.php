@@ -2,9 +2,11 @@
 
 namespace App\Admin\Controllers;
 
+use App\Group;
 use Encore\Admin\Auth\Database\Administrator;
 use Encore\Admin\Controllers\AuthController as BaseAuthController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
@@ -21,12 +23,22 @@ class AuthController extends BaseAuthController
     {
         $this->validator($request->all())->validate();
 
-        $user = $this->create($request->all());
+        DB::transaction(function() use($request){
+            $user = $this->create($request->all());
 
-        //默认设置为会员
-        $user->roles()->sync([3]);
+            //默认设置为会员
+            $user->roles()->sync([3]);
+            //添加默认分组
+            Group::query()->create([
+                'user_id'=>$user->id ,
+                'name'=>'默认分组'
 
-        $this->guard()->login($user);
+            ]);
+
+            $this->guard()->login($user);
+        });
+
+
 
         return view('admin.register_success');
     }

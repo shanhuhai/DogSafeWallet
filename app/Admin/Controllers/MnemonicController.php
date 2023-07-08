@@ -55,7 +55,7 @@ HTML;
             return '<button class="btn btn-primary generate-wallets-btn" data-mnemonic-id="'.$this->id.'" data-encrypted-mnemonic="'.$this->encrypted_content.'">'. __('Generate wallets') .'</button>';
         });
         $grid->footer(function ($query) use($grid){
-            $groups = Group::all()->pluck('name', 'id')->toArray();
+            $groups = Helper::groups();
             return view('mnemonic.modal')->with('groups',$groups)->with('tableId',$grid->tableID);
         });
         return $grid;

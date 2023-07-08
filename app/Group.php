@@ -14,6 +14,7 @@ use Web3p\EthereumUtil\Util;
 
 class Group extends Model
 {
+    protected $fillable = ['user_id', 'name'];
     //
     public function wallets()
     {
