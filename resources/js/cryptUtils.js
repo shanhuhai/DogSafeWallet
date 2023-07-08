@@ -15,7 +15,7 @@ function getEncryptionKey(UID) {
 
         </div>
         <div class="swal2-help-icon">
-        <i id="help-icon" class="fa fa-question-circle" style="color: red"></i>
+        <i id="help-icon" class="fa fa-question-circle" style="color: #f39c12"></i>
         </div>
         <div class="checkbox">
 <!--        <label for="store-key-checkbox" >-->
@@ -56,11 +56,11 @@ function getEncryptionKey(UID) {
                 $('.swal2-help-icon').appendTo('.swal2-title');
                 $('#help-icon').popover({
                     content: "<div><h4>注意：</h4>1.加密密钥用于加密您的私钥和助记词等敏感数据;<br>" +
-                        "2.加解密密过程完全在前端进行，后端不会存储您的明文私钥和助记词;<br>" +
-                        "3.后端也不会存储您的加密密钥，请自行备份好。<br>" +
+                        "2.加解解密密过程完全在前端进行，后端不会存储您的明文私钥和助记词;<br>" +
+                        "3.后端也不会存储您的加密密钥，请自行备份好，一旦丢失无法找回。<br>" +
                         "4.加密密钥存储在您的浏览器缓存中， 没有过期时间，但是一旦浏览器缓存被清除，或换了新设备， 则需要您重新输入。<br>" +
                         "5.加密密钥只能设置一次，后续不可修改， 一旦修改意味着修改前的数据将无法被解密。<br>"+
-                        "6.因为后端只存储了加密数据，且解密秘钥只存储在您的浏览上， 即便网站被攻克，也能保证不会泄露您的私钥和助记词</div>",
+                        "6.因为后端只存储了加密数据，且解密秘钥只存储在您的浏览器上， 所以即便网站被攻克，也能保证不会泄露您的私钥和助记词</div>",
                     trigger: 'hover',
                     placement: 'right',
                     container: 'body',

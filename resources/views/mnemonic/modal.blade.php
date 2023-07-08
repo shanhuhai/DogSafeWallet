@@ -33,12 +33,12 @@
         var mnemonicId;
         var mnemonic;
         var offset ={};
-        var wallets = {};
+        var wallets = [];
         const ENCRYPTION_KEY = CryptUtils.getEncryptionKey(UID);
 
         function generateWallets(mnemonic, coinCode,walletNum){
 
-            wallets =  Wallet.generateWalletsFromMnemonic(mnemonic, coinCode, walletNum,offset[mnemonic]);
+            wallets = wallets.concat(  Wallet.generateWalletsFromMnemonic(mnemonic, coinCode, walletNum,offset[mnemonic]));
 
             let tbody = $('#generate-wallets-modal').find('.modal-body-wallets tbody');
 
@@ -76,6 +76,7 @@
                 return;
             }
             walletCount = parseInt(walletCount)
+
             if(walletCount>offset[mnemonic]){
                 generateWallets(mnemonic, 60, walletCount-offset[mnemonic],offset[mnemonic]);
                 offset[mnemonic] = walletCount
