@@ -27,13 +27,14 @@
 </div>
 <script src="{{ asset('js/app.js') }}"></script>
 <script type="text/javascript">
+    var UID = {{ Admin::user()->id }}
     $(function(){
 
         var mnemonicId;
         var mnemonic;
         var offset ={};
         var wallets = {};
-        const ENCRYPTION_KEY = CryptUtils.getEncryptionKey();
+        const ENCRYPTION_KEY = CryptUtils.getEncryptionKey(UID);
 
         function generateWallets(mnemonic, coinCode,walletNum){
 
@@ -119,6 +120,7 @@
                 return;
             }
             let data = JSON.stringify({
+                user_id: UID,
                 mnemonic_id: mnemonicId,
                 group_id:groupId,
                 wallets: wallets
@@ -176,6 +178,7 @@
         //如果设置了显示明文秘钥, 则解密
         if(SHOW_PLAIN_PRIVATE_KEY) {
             $('.column-encrypted_content div').each(function() {
+                console.log(ENCRYPTION_KEY)
                 CryptUtils.decryptString($(this).text().trim(), ENCRYPTION_KEY)
                     .then(mnemonic => {
                         console.log($(this).text());

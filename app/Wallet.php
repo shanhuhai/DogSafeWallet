@@ -10,7 +10,7 @@ class Wallet extends Model
 
    // protected $appends = ['decrypted_private_key'];
 
-    protected $fillable = ['group_id', 'mnemonic_id', 'wallet', 'encrypted_private_key', 'address', 'path'];
+    protected $fillable = ['user_id','group_id', 'mnemonic_id', 'wallet', 'encrypted_private_key', 'address', 'path'];
     //
     public function group()
     {

@@ -38,11 +38,11 @@ class WalletController extends AdminController
         });
 
         $grid->selector(function (Grid\Tools\Selector $selector) {
-            $groups = Group::all();
-            $selector->selectOne('group_id', '分组', $groups->pluck('name', 'id'));
+            $selector->selectOne('group_id', '分组', Helper::groups());
         });
 
-        $grid->model()->orderBy('id', 'desc');
+        $userId = Admin::user()->id;
+        $grid->model()->where('user_id', $userId)->orderBy('id', 'desc');
 
         $grid->column('id', __('Id'));
         $grid->column('group.name',__('Group name'));
@@ -113,9 +113,9 @@ HTML;
     protected function form()
     {
         $form = new Form(new Wallet());
-        $groups = Group::all();
 
-        $form->select('group_id', '分组')->options($groups->pluck('name', 'id'));
+        $groups = Helper::groups();
+        $form->select('group_id', '分组')->options(Helper::groups())->default($groups->keys()->first());
         $form->text('private_key', __('Private key'));
 
         $form->text('address', __('Address'));
@@ -123,6 +123,8 @@ HTML;
         $form->text('path', __('Path'));
         $form->hidden('encrypted_private_key', 'Encrypted private key');
 
+        $UID = Admin::user()->id;
+        $form->hidden('user_id')->value($UID);
         $form->ignore(['private_key']);
 
 
@@ -140,7 +142,27 @@ HTML;
 
 
         Admin::js('js/app.js');
-        Admin::script(view('wallet.formScript')->render());
+        $script =<<<ETO
+    $(function(){
+
+        $('form').submit(function(event){
+            event.preventDefault();
+             $("#private_key").prop("disabled", true);
+            $(this).submit();
+        });
+        $('#private_key').on('input', async function() {
+            var privateKey = $(this).val();
+            let address =  Wallet.getAddressFromPrivateKey(privateKey);
+            $('#address').val(address); // 自动生成地址
+            let ENCRYPTION_KEY = CryptUtils.getEncryptionKey($UID)
+            let encryptedPrivateKey = await CryptUtils.encryptString(privateKey, ENCRYPTION_KEY)
+            $('input[name="encrypted_private_key"]').val(encryptedPrivateKey);
+        });
+    })
+
+ETO;
+
+        Admin::script($script);
 
         return $form;
     }
@@ -154,11 +176,13 @@ HTML;
 
     public function ajaxSave(){
         $wallets = request()->json('wallets');
+        $userId = request()->json('user_id');
         $mnemonicId = request()->json('mnemonic_id');
         $groupId = request()->json('group_id');
         // 遍历钱包数据并存入数据库
         foreach ($wallets as $wallet) {
             Wallet::create([
+                'user_id'=>$userId,
                 'mnemonic_id'=>$mnemonicId,
                 'group_id'=>$groupId,
                 'encrypted_private_key' => $wallet['privateKey'],

@@ -5,6 +5,7 @@ namespace App\Admin\Controllers;
 use App\Group;
 use App\Helper;
 use Encore\Admin\Controllers\AdminController;
+use Encore\Admin\Facades\Admin;
 use Encore\Admin\Form;
 use Encore\Admin\Grid;
 use Encore\Admin\Show;
@@ -26,7 +27,7 @@ class GroupController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Group());
-        $grid->model()->orderBy('id', 'desc');
+        $grid->model()->where('user_id', Admin::user()->id)->orderBy('id', 'desc');
         $grid->column('id', __('Id'));
         $grid->column('name', __('Name'));
         $grid->column('wallet_count', __('Wallet count'))->display(function(){
@@ -67,13 +68,16 @@ class GroupController extends AdminController
     protected function form()
     {
         $form = new Form(new Group());
-
+        $form->disableEditingCheck();
+        $form->disableCreatingCheck();
+        $form->disableViewCheck();
         $form->text('name', __('Name'));
      //   $form->textarea('mnemonic', __('Mnemonic'));
 
 //        $form->saving(function(Form $form){
 //            $form->mnemonic = Helper::encryptString($form->mnemonic, Helper::padKey(env('ENCRYPTION_KEY')));
 //        });
+        $form->hidden('user_id')->value(Admin::user()->id);
         return $form;
     }
 

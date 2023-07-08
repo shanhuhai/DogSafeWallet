@@ -34,7 +34,7 @@ class AuthController extends BaseAuthController
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'username' => ['required', 'string', 'min:3','max:50','unique:admin_users'],
+            'username' => ['required', 'string', 'min:2','max:50','unique:admin_users'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:admin_users'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ]);

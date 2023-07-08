@@ -4,11 +4,12 @@
     var SHOW_PLAIN_PRIVATE_KEY = {{ \App\Helper::config('show_plain_private_key') }};
     var tableId = '{{ $tableId }}';
     var networks = {!!  $networks !!};
+    var UID = {{ Admin::user()->id }};
 
 
     $(function(){
         //检查ENCRYPTION_KEY 是否设置。
-        const ENCRYPTION_KEY = CryptUtils.getEncryptionKey()
+        const ENCRYPTION_KEY = CryptUtils.getEncryptionKey(UID)
         console.log(SHOW_PLAIN_PRIVATE_KEY)
         console.log(ENCRYPTION_KEY)
         //如果设置了显示明文秘钥, 则解密

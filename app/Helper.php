@@ -69,4 +69,14 @@ class Helper {
         return $configs->has($key) ?  $configs[$key] : $default;
     }
 
+
+    public static function groups($userId  = null) {
+        if (is_null($userId)) {
+            $userId = Admin::user()->id;
+        }
+
+        $groups = Group::where('user_id', $userId)->get();
+
+        return $groups->pluck('name', 'id');
+    }
 }

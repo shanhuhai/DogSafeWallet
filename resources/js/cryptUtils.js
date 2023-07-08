@@ -1,5 +1,5 @@
-function getEncryptionKey() {
-    var encryptionKey = localStorage.getItem('ENCRYPTION_KEY');
+function getEncryptionKey(UID) {
+    var encryptionKey = localStorage.getItem(UID+'ENCRYPTION_KEY');
 
     if (encryptionKey && encryptionKey.trim() !== '') {
         return encryptionKey;
@@ -35,14 +35,14 @@ function getEncryptionKey() {
                         if (storeKeyOnServer) {
                             saveKeyOnServer(key)
                                 .then(() => {
-                                    localStorage.setItem('ENCRYPTION_KEY', key);
+                                    localStorage.setItem(UID+'ENCRYPTION_KEY', key);
                                     resolve(key);
                                 })
                                 .catch((error) => {
                                     reject(`无法将密钥保存到服务器: ${error}`);
                                 });
                         } else {
-                            localStorage.setItem('ENCRYPTION_KEY', key);
+                            localStorage.setItem(UID+'ENCRYPTION_KEY', key);
                             resolve(key);
                         }
                     } else {
@@ -72,11 +72,11 @@ function getEncryptionKey() {
                 window.reload()
                 return result.value;
             } else {
-                return getEncryptionKey(); // 重新要求填写加密密钥
+                return getEncryptionKey(UID); // 重新要求填写加密密钥
             }
         }).catch((error) => {
             Swal.showValidationMessage(error);
-            return getEncryptionKey(); // 重新要求填写加密密钥
+            return getEncryptionKey(UID); // 重新要求填写加密密钥
         });
     }
 }
