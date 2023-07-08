@@ -27,6 +27,8 @@ class GroupController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Group());
+        $grid->disableExport();
+
         $grid->model()->where('user_id', Admin::user()->id)->orderBy('id', 'desc');
         $grid->column('id', __('Id'));
         $grid->column('name', __('Name'));

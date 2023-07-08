@@ -28,6 +28,7 @@ class MnemonicController extends AdminController
     protected function grid()
     {
         $grid = new Grid(new Mnemonic());
+        $grid->disableExport();
 
         $grid->model()->where('user_id', Admin::user()->id)->orderBy('id', 'desc');
         $grid->column('id', __('Id'));

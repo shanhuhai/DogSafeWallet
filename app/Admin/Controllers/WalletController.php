@@ -31,6 +31,8 @@ class WalletController extends AdminController
          Helper::config('show_plain_private_key');
 
         $grid = new Grid(new Wallet());
+        $grid->disableExport();
+
         $grid->filter(function($filter){
             $filter->disableIdFilter();
             // 在这里添加字段过滤器
