@@ -5,17 +5,21 @@
                 <h4 class="modal-title">Generate Wallets</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-            <div class="modal-body">
+            <div class="modal-body ">
                 <label for="wallet-count-input">Wallet Count:</label>
-                <input type="number" class="form-control" id="wallet-count-input" min="1" step="1" value="3">
+                <input type="number" class="form-control" id="wallet-count-input" min="1" step="1" value="3" max="5">
                 <label for="wallet-group-input">Group:</label>
                 <select id="wallet-group-input" class="form-control">
                     @foreach($groups as $id=>$name):
                     <option value="{{$id}}">{{$name}}</option>
                     @endforeach
                 </select>
-                <div class="modal-body-wallets" style="max-height:300px;overflow:scroll">
+                <div class="modal-body-wallets box" style="max-height:300px;overflow:scroll">
+                    <div class="overlay" style="display: none">
+                        <i class="fa fa-refresh fa-spin"></i>
+                    </div>
                 </div>
+
             </div>
 
             <div class="modal-footer">
@@ -24,6 +28,7 @@
             </div>
         </div>
     </div>
+
 </div>
 <script src="{{ asset('js/app.js') }}"></script>
 <script type="text/javascript">
@@ -38,7 +43,8 @@
 
         function generateWallets(mnemonic, coinCode,walletNum){
 
-            wallets = wallets.concat(  Wallet.generateWalletsFromMnemonic(mnemonic, coinCode, walletNum,offset[mnemonic]));
+            let newWallets = Wallet.generateWalletsFromMnemonic(mnemonic, coinCode, walletNum,offset[mnemonic]);
+            wallets = wallets.concat( newWallets );
 
             let tbody = $('#generate-wallets-modal').find('.modal-body-wallets tbody');
 
@@ -56,8 +62,8 @@
                 $('#generate-wallets-modal').find('.modal-body-wallets').append(table);
             }
 
-            for (let i = 0; i < wallets.length; i++) {
-                let wallet = wallets[i];
+            for (let i = 0; i < newWallets.length; i++) {
+                let wallet = newWallets[i];
                 let row = $('<tr>').append(
 
                     $('<td>').text(wallet.derivePath),
@@ -75,12 +81,23 @@
                 alert('Invalid wallet count. Please enter a positive number.');
                 return;
             }
-            walletCount = parseInt(walletCount)
-
-            if(walletCount>offset[mnemonic]){
-                generateWallets(mnemonic, 60, walletCount-offset[mnemonic],offset[mnemonic]);
-                offset[mnemonic] = walletCount
+            if(walletCount >=50) {
+                swal('普通会员只能生成50个钱包,请联系管理员', '', 'error');
+                return;
             }
+
+            let overlay = $('.overlay')
+            overlay.show()
+            walletCount = parseInt(walletCount)
+            if(walletCount>offset[mnemonic]){
+                setTimeout(function (){
+                    generateWallets(mnemonic, 60, walletCount-offset[mnemonic],offset[mnemonic]);
+                    offset[mnemonic] = walletCount
+                    overlay.hide()
+                    }, 500)
+
+            }
+
         });
         //批量生成钱包
         $(document).on('click', '.generate-wallets-btn', async function() {
