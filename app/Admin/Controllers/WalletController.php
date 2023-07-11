@@ -199,6 +199,7 @@ ETO;
                 'group_id'=>$groupId,
                 'encrypted_private_key' => $wallet['privateKey'],
                 'address' => $wallet['address'],
+                'path' =>$wallet['derivePath']
             ]);
         }
 
