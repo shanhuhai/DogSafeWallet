@@ -12,22 +12,7 @@
         const ENCRYPTION_KEY = CryptUtils.getEncryptionKey(UID)
         console.log(SHOW_PLAIN_PRIVATE_KEY)
         console.log(ENCRYPTION_KEY)
-        //如果设置了显示明文秘钥, 则解密
-        if(SHOW_PLAIN_PRIVATE_KEY) {
-            $('.column-encrypted_private_key div').each(function() {
-                CryptUtils.decryptString($(this).text().trim(), ENCRYPTION_KEY)
-                    .then(privateKey => {
-                        console.log($(this).text());
-                        console.log(privateKey);
-                        $(this).data('decrypted',privateKey);
-                        $(this).parent().find('span').text(CryptUtils.maskString(privateKey));
 
-                    })
-                    .catch(error => {
-                        console.error(error);
-                    });
-            });
-        }
         //处理复制
         $('#'+tableId).on('click','.private-key-grid-column-copyable',(async function (e) {
             var content = $(this).data('content');

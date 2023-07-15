@@ -2,6 +2,7 @@
 
 namespace App\Admin\Controllers;
 
+use App\Admin\Actions\Wallet\Copy;
 use App\Group;
 use App\Wallet;
 use Encore\Admin\Controllers\AdminController;
@@ -63,17 +64,17 @@ HTML;
             return $return;
         })->copyable();
 
-        $grid->column( 'encrypted_private_key', $SHOW_PLAIN_PRIVATE_KEY ?__('Private key'):__('Private key(Encrypted)'))->display(function($val,$column){
-            $return = <<<HTML
-<a href="javascript:void(0);" class="private-key-grid-column-qrcode text-muted"  data-toggle='popover' tabindex='0'>
-    <i class="fa fa-qrcode"></i>
-</a>&nbsp;
-HTML;
-            $return .=  "<span>".Helper::maskString($val)."</span>"."<div style='display: none'>$val</div>";
-            //复制按钮
-            return $return.'<a href="javascript:void(0);" class="private-key-grid-column-copyable text-muted" data-content="'.$val.'" title="Copied!" data-placement="bottom">
-    <i class="fa fa-copy"></i>';
-        });
+//        $grid->column( 'encrypted_private_key', $SHOW_PLAIN_PRIVATE_KEY ?__('Private key'):__('Private key(Encrypted)'))->display(function($val,$column){
+//            $return = <<<HTML
+//<a href="javascript:void(0);" class="private-key-grid-column-qrcode text-muted"  data-toggle='popover' tabindex='0'>
+//    <i class="fa fa-qrcode"></i>
+//</a>&nbsp;
+//HTML;
+//            $return .=  "<span>".Helper::maskString($val)."</span>"."<div style='display: none'>$val</div>";
+//            //复制按钮
+//            return $return.'<a href="javascript:void(0);" class="private-key-grid-column-copyable text-muted" data-content="'.$val.'" title="Copied!" data-placement="bottom">
+//    <i class="fa fa-copy"></i>';
+//        });
 
         $selectedNetworks = auth()->user()->networks;
 
@@ -87,6 +88,11 @@ HTML;
         $grid->column('path', __('Path'));
         $grid->column('note', __('Note'));
 
+        $grid->actions(function($actions){
+            $copyAction = new Copy();
+            $copyAction->setRow($actions->row);
+            $actions->add($copyAction);
+        });
         $grid->footer(function($query) use ($grid, $SHOW_PLAIN_PRIVATE_KEY, $selectedNetworks) {
             return view('wallet.gridFooter')
                 ->with('tableId', $grid->tableID)
